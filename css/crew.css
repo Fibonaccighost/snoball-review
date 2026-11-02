@@ -1,0 +1,374 @@
+/* CREW (talent management) page. Desktop layout is positioned 1:1 from the 1440px Figma frame.
+   Text blocks use --x/--y (glyph-top of the first line, section-local) plus --fs/--lh; the top is
+   corrected so the first line's cap height lands on --y the way it does in the design. */
+
+.crew { background: #fff; }
+.crew .pink { color: var(--pink); }
+
+.crew section { position: relative; }
+
+.t {
+  position: absolute;
+  left: calc(var(--x, 0) * 1px);
+  top: calc(var(--y) * 1px - var(--lh) * .5px + var(--fs) * .35px);
+  font-size: calc(var(--fs) * 1px);
+  line-height: calc(var(--lh) * 1px);
+  white-space: nowrap;
+}
+.t.c { left: 0; right: 0; text-align: center; }
+
+/* Shared type */
+.cr-h2 { --fs: 83; --lh: 79; font-weight: 300; letter-spacing: -.04em; color: var(--ink); }
+.cr-h2 strong { font-weight: 700; }
+.cr-para { --fs: 31; --lh: 30; font-weight: 300; color: #000; }
+
+.glow {
+  position: relative;
+  display: inline-block;
+  font-weight: 700;
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  isolation: isolate;
+}
+.glow::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: blur(12.3px);
+  opacity: .7;
+  pointer-events: none;
+}
+
+/* Buttons */
+.cr-btn {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: filter .2s, background-color .2s, color .2s, transform .2s;
+}
+.cr-btn:hover { filter: brightness(1.06); }
+.cr-btn--pink, .cr-btn--outline { height: 44px; border-radius: 22px; font-size: 14px; }
+.cr-btn--pink { left: 146px; top: 568.6px; width: 142px; background: var(--pink); color: #fff; }
+.cr-btn--outline { left: 302px; top: 569.6px; width: 205px; height: 43px; background: #fff; color: var(--pink); border: 1px solid var(--pink); }
+.cr-btn--outline:hover { background: #fff0f7; filter: none; }
+
+/* ---------- Hero ---------- */
+.cr-hero { height: 773px; }
+.cr-hero__title { --x: 145; --y: 120.6; --fs: 72; --lh: 68; font-weight: 300; letter-spacing: -.05em; color: var(--ink); }
+.cr-hero__title em { font-style: italic; font-weight: 800; letter-spacing: -.015em; -webkit-text-stroke: 1.1px currentColor; }
+.cr-hero__lede { --x: 147; --y: 429.6; --fs: 26; --lh: 25; font-weight: 300; color: #000; }
+.cr-hero__lede em { font-style: italic; font-weight: 800; font-size: 26px; -webkit-text-stroke: .35px currentColor; }
+.cr-hero__logo { position: absolute; left: 846px; top: 112.6px; width: 448px; height: 500px; }
+.cr-hero__logo img { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* Headline words rise in one by one (js/crew.js wraps them in .cr-word and staggers the delay) */
+.cr-word { display: inline-block; opacity: 0; transform: translateY(28px); transition: opacity .7s cubic-bezier(.22, 1, .36, 1), transform .7s cubic-bezier(.22, 1, .36, 1); }
+.cr-hero__title.is-in .cr-word { opacity: 1; transform: none; }
+/* The pink e and star move a little: the star turns and twinkles, the e sways */
+.cr-logo__star { transform-origin: 77% 12.5%; animation: cr-star 3.4s cubic-bezier(.45, 0, .55, 1) infinite alternate; }
+.cr-logo__e { transform-origin: 22% 68%; animation: cr-e 4.6s cubic-bezier(.45, 0, .55, 1) infinite alternate; }
+@keyframes cr-star { from { transform: rotate(-9deg) scale(.94); } to { transform: rotate(9deg) scale(1.06); } }
+@keyframes cr-e { from { transform: rotate(-3deg) translateY(-5px); } to { transform: rotate(2.5deg) translateY(4px); } }
+
+/* ---------- Building the internet's classrooms ---------- */
+/* Pinned for 1400px of scroll; the stage sticks under the nav (js/crew.js sets its top) */
+.cr-class { height: calc(651.6px + 1400px); }
+.cr-class__stage, .cr-expertise__stage { position: sticky; top: 0; }
+.cr-class__stage { height: 651.6px; }
+.cr-ln { color: #5d5d5d; transition: color .6s cubic-bezier(.22, 1, .36, 1); }
+.cr-ln.is-on { color: #fff; }
+.cr-slide { position: absolute; inset: 0; opacity: 0; transform: translateY(18px); transition: opacity .6s cubic-bezier(.22, 1, .36, 1), transform .6s cubic-bezier(.22, 1, .36, 1); pointer-events: none; }
+.cr-slide.is-on { opacity: 1; transform: none; }
+/* Each slide's copy sits centred vertically in the card */
+.cr-slide { display: flex; align-items: center; }
+.cr-slide .cr-glow__lead { position: relative; top: auto; }
+.cr-eyebrow { --x: 451; --y: 32.6; --fs: 21; --lh: 21; font-weight: 300; text-transform: uppercase; color: #000; letter-spacing: -.005em; }
+.cr-class__title { left: 0; right: 0; text-align: center; --y: 73.6; }
+.cr-glow { position: absolute; left: 147px; top: 266.6px; width: 1146px; height: 314px; color: #5d5d5d; }
+.cr-glow__bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cr-glow__left { --x: 151; --y: 82; --fs: 41; --lh: 40; font-weight: 300; }
+.cr-glow .w { color: #fff; }
+.cr-glow__rule { position: absolute; left: 574px; top: 80px; width: 1px; height: 153px; background: #fff; }
+.cr-glow__lead {
+  --x: 620; --y: 89; --fs: 26; --lh: 24; font-weight: 300;
+  background: linear-gradient(90deg, #ee4cd8 0%, #fef4ce 34.13%, #c69ff5 66.35%, #7214c3 93.27%) 0 0 / 358px 100% no-repeat;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.cr-glow__lead strong { font-weight: 700; }
+.cr-dots { position: absolute; left: 1032px; top: 125px; display: flex; flex-direction: column; gap: 18px; z-index: 2; }
+.cr-dots button {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: linear-gradient(225deg, #ee4cd8 0%, #c69ff5 47%, #7214c3 93%);
+  background: linear-gradient(45deg, #ee4cd8 0%, #c69ff5 47.12%, #7214c3 93.27%);
+  -webkit-mask: radial-gradient(circle, transparent 2.4px, #000 2.9px);
+  mask: radial-gradient(circle, transparent 2.4px, #000 2.9px);
+  transition: transform .2s;
+}
+.cr-dots button.is-active { -webkit-mask: none; mask: none; }
+.cr-dots button:hover { transform: scale(1.25); }
+
+/* ---------- Meet the voices ---------- */
+.cr-voices { height: 1034px; background: #000; }
+.cr-voices__title { left: 0; right: 0; text-align: center; --y: 86; color: #fff; }
+.cr-voices__sub { left: 0; right: 0; text-align: center; --y: 269; --fs: 31; --lh: 30; font-weight: 300; color: #fff; z-index: 2; /* sits above the gallery's curved black top edge */ }
+.cr-voices__sub em { font-style: italic; font-weight: 700; font-size: 29.5px; }
+.cr-gallery { position: absolute; left: 146px; top: 303px; width: 1148px; height: 689px; }
+.cr-gallery__panels { position: absolute; inset: 0; overflow: hidden; }
+/* The view shows exactly three slots; the track slides inside it */
+.cr-gallery__view { position: absolute; left: 35px; top: 58px; width: 1077px; height: 577px; overflow: hidden; }
+.cr-gallery__track { position: relative; display: flex; gap: 16.5px; transition: transform .7s cubic-bezier(.22, 1, .36, 1); }
+.cr-gallery__panel { position: relative; flex: 0 0 348px; height: 577px; background: #d9d9d9; }
+.cr-reel__label { position: absolute; left: 24px; bottom: 72px; font-size: 14px; line-height: 20px; font-weight: 600; color: rgba(0, 0, 0, .45); }
+.cr-gallery__panels::before,
+.cr-gallery__panels::after { content: ""; position: absolute; left: 0; width: 1148px; height: 96px; border-radius: 50%; background: #000; z-index: 1; }
+.cr-gallery__panels::before { top: 0; }
+.cr-gallery__panels::after { top: 593px; }
+.cr-chev { position: absolute; top: 327px; width: 23px; height: 38px; transition: opacity .2s; }
+.cr-chev svg { display: block; }
+.cr-chev:hover { opacity: .6; }
+.cr-chev--prev { left: -54px; }
+.cr-chev--next { left: 1179.4px; }
+
+/* ---------- Expertise ---------- */
+.cr-expertise { height: calc(868px + 1800px); }
+.cr-expertise__stage { height: 868px; overflow: hidden; }
+.cr-expertise__title, .cr-expertise__sub { z-index: 2; }
+.cr-tag { z-index: 1; will-change: transform, opacity; }
+.cr-expertise__title { left: 0; right: 0; text-align: center; --y: 281; }
+.cr-expertise__sub { left: 0; right: 0; text-align: center; --y: 464; }
+.cr-tags { list-style: none; margin: 0; padding: 0; }
+.cr-tag {
+  position: absolute;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; text-transform: uppercase; white-space: nowrap;
+  color: var(--pink); background: #fff;
+  border: 2px solid var(--pink); border-radius: 18px;
+}
+.cr-tag--fill { background: var(--pink); color: #fff; }
+.cr-tag--blur { filter: blur(3.8px); }
+/* Each tag has a blurred twin: tags arrive blurred, turn sharp in place, then leave (js/crew.js crossfades them) */
+.cr-tag--ghost { filter: blur(4px); pointer-events: none; }
+.cr-tag--biz    { left: 98px;   top: 145px; width: 354px; height: 45px; font-size: 25px; border-width: 1.9px; }
+.cr-tag--design { left: 1036px; top: 130px; width: 133px; height: 45px; font-size: 24.5px; border-width: 1.9px; }
+.cr-tag--ai     { left: 166px;  top: 339px; width: 89px;  height: 56px; font-size: 28.6px; border-width: 2.3px; border-radius: 20px; }
+.cr-tag--prod   { left: 1171px; top: 358px; width: 214px; height: 45px; font-size: 24.7px; border-width: 1.9px; }
+.cr-tag--tech   { left: 1059px; top: 558px; width: 135px; height: 58px; font-size: 31px;   border-width: 2.4px; border-radius: 21px; }
+.cr-tag--entre  { left: 196px;  top: 594px; width: 300px; height: 45px; font-size: 25px;   border-width: 1.9px; }
+.cr-tag--eng    { left: 660px;  top: 635px; width: 188px; height: 39px; font-size: 21.4px; border-width: 1.6px; border-radius: 16px; }
+/* The six disciplines the design didn't place: they arrive in the second wave */
+.cr-tag--vc, .cr-tag--mkt, .cr-tag--adv, .cr-tag--eco, .cr-tag--film, .cr-tag--fin { height: 45px; padding: 0 20px; font-size: 25px; border-width: 1.9px; }
+.cr-tag--vc   { left: 120px;  top: 150px; }
+.cr-tag--mkt  { left: 1010px; top: 140px; }
+.cr-tag--adv  { left: 1130px; top: 430px; }
+.cr-tag--eco  { left: 110px;  top: 575px; }
+.cr-tag--film { left: 1000px; top: 640px; }
+.cr-tag--fin  { left: 300px;  top: 660px; }
+
+/* ---------- Brands ---------- */
+.cr-brands { height: 1036.4px; }
+.cr-brands__box { position: absolute; left: 60px; top: 0; width: 1320px; height: 962px; background: #000; border-radius: 59px; }
+.cr-brands__title { left: 0; right: 0; text-align: center; --y: 102; color: #fff; }
+.cr-brands__grid { position: absolute; left: 169px; top: 296px; width: 1020px; height: 450px; }
+.cr-brands__bg { width: 100%; height: 100%; }
+.cr-brands__grid ul { list-style: none; margin: 0; padding: 0; position: absolute; left: 10px; top: 30px; display: grid; grid-template-columns: repeat(3, 322px); grid-auto-rows: 125px; column-gap: 16.5px; row-gap: 17px; }
+.cr-brands__grid ul { z-index: 1; }
+.cr-brands__grid li { display: flex; align-items: center; justify-content: center; font-size: 40px; letter-spacing: -.01em; }
+/* Dim names are an opaque grey over the gradient; lighting a name fades the grey away to show the gradient */
+.cr-brands__grid li span { background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: #383838; transition: color .5s cubic-bezier(.22, 1, .36, 1); }
+.cr-brands__grid li.is-lit span { color: transparent; font-weight: 700; }
+/* The glow behind the lit name slides from cell to cell (js/crew.js sets --cx/--cy) */
+.cr-brands__glow { position: absolute; left: 7px; top: 27px; width: 328px; height: 131px; transform: translate(var(--cx, 0px), var(--cy, 0px)); transition: transform .7s cubic-bezier(.22, 1, .36, 1); }
+.cr-brands__sub { left: 0; right: 0; text-align: center; --y: 820; --fs: 30; --lh: 30; color: #fff; }
+
+/* ---------- Your ideas deserve an entire team ---------- */
+.cr-ideas { height: 860px; }
+.cr-ideas__title { --x: 145; --y: 67.6; }
+.cr-ideas__sub { --x: 146; --y: 246.6; }
+.cr-cards { position: absolute; left: 119px; top: 367.6px; }
+.cr-card { position: absolute; top: 0; width: 400px; height: 390px; isolation: isolate; color: #fff; transition: transform .5s cubic-bezier(.22, 1, .36, 1); }
+/* Hover: the card pops out and a deeper shadow fades in under it */
+.cr-card::before { content: ""; position: absolute; left: 28px; top: 20.5px; width: 357px; height: 343px; border-radius: 40px; z-index: -1;
+  box-shadow: 0 34px 60px -12px rgba(0, 0, 0, .45), 0 12px 24px rgba(0, 0, 0, .18); opacity: 0; transition: opacity .5s cubic-bezier(.22, 1, .36, 1); }
+.cr-card:hover { transform: translateY(-14px) scale(1.035); z-index: 2; }
+.cr-card:hover::before { opacity: 1; }
+.cr-card:nth-child(1) { left: 0; }
+.cr-card:nth-child(2) { left: 394px; }
+.cr-card:nth-child(3) { left: 789px; }
+.cr-card__bg { position: absolute; inset: 0; width: 400px; height: 390px; }
+.cr-card__num { --x: 57; --y: 51; --fs: 43; --lh: 43; font-weight: 700; }
+.cr-card__title { --x: 56; --y: 205; --fs: 31; --lh: 31; font-weight: 700; letter-spacing: -.005em; }
+.cr-card__title span { display: block; mix-blend-mode: overlay; }
+/* Readability: the top copy is solid white with a soft shadow; the overlay copy underneath keeps the colour tint */
+.cr-card__title span + span { position: absolute; inset: 0; mix-blend-mode: normal; color: #fff; text-shadow: 0 2px 14px rgba(0, 0, 0, .45); }
+.cr-card__body { --x: 56; --y: 279; --fs: 14.6; --lh: 15; }
+
+/* ---------- For ambitious brands ---------- */
+.cr-partner { height: 567.6px; }
+.cr-partner__eyebrow { left: 0; right: 0; text-align: center; --y: 51.6; --fs: 31; --lh: 31; font-weight: 300; color: #000; }
+.cr-partner__title { left: 0; right: 0; text-align: center; --y: 127.6; }
+.cr-partner__sub { left: 0; right: 0; text-align: center; --y: 317.6; }
+.cr-btn--partner { left: 602px; top: 416.6px; width: 237px; height: 54px; border-radius: 27px; background: var(--pink); color: #fff; font-weight: 700; font-size: 21px; }
+
+/* ---------- Build your name ---------- */
+.cr-build { height: 810px; background: #000; color: #fff; }
+.cr-build__title { --x: 145; --y: 162; color: #fff; }
+.cr-build__sub { --x: 148; --y: 362; color: #fff; }
+.cr-btn--apply {
+  left: 148px; top: 570px; width: 301px; height: 54px; border-radius: 27px; color: #fff; font-size: 22px;
+  background: linear-gradient(72.5deg, #ee4cd8 0%, #c69ff5 47.12%, #7214c3 93.27%);
+}
+.cr-build__alt { --x: 148; --y: 644; --fs: 15.5; --lh: 16; font-weight: 300; }
+.cr-build__alt a {
+  margin-left: 19px; font-weight: 700;
+  background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent;
+  position: relative;
+}
+.cr-build__alt a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: var(--grad-brand); transition: opacity .2s; }
+.cr-build__alt a:hover::after { opacity: .5; }
+.cr-build__art { position: absolute; left: 815px; top: 126px; width: 449px; height: 559px; }
+.cr-build__art img { display: block; width: 100%; height: 100%; }
+/* Glass lens over the orbs: blurs what's behind it, with a rim and a highlight. Leans toward the pointer. */
+.cr-glass {
+  position: absolute; left: 27.11%; top: 31.71%; width: 45.77%; aspect-ratio: 1; border-radius: 50%; overflow: hidden;
+  -webkit-backdrop-filter: blur(5px) saturate(1.3) brightness(1.08); backdrop-filter: blur(5px) saturate(1.3) brightness(1.08);
+  background: radial-gradient(circle at 50% 120%, rgba(255, 255, 255, .1), rgba(255, 255, 255, .04) 60%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28), inset 0 2px 1px rgba(255, 255, 255, .35), inset 0 -18px 40px rgba(255, 255, 255, .05), 0 24px 50px rgba(0, 0, 0, .35);
+  transform: translate3d(var(--gx, 0px), var(--gy, 0px), 0) scale(var(--gs, 1));
+  transition: transform .9s cubic-bezier(.22, 1, .36, 1);
+}
+.cr-glass::before { content: ""; position: absolute; left: -10%; top: -10%; width: 70%; height: 70%; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, .32), transparent 65%);
+  transform: translate3d(var(--hx, 0px), var(--hy, 0px), 0); transition: transform .6s cubic-bezier(.22, 1, .36, 1); }
+
+/* ---------- Below the design width: stacked layout ---------- */
+@media (max-width: 1100px) {
+  .t, .cr-btn, .cr-hero__logo, .cr-glow, .cr-glow__rule, .cr-dots, .cr-gallery, .cr-chev, .cr-tag,
+  .cr-brands__box, .cr-brands__grid, .cr-cards, .cr-card, .cr-build__art, .cr-brands__grid ul { position: static; }
+  .t { white-space: normal; font-size: calc(var(--fs) * 1px); line-height: 1.12; }
+  .crew br.d, .cr-hero__title br { display: none; }
+  .crew section { height: auto; padding: 64px 24px; }
+  .cr-h2 { font-size: clamp(42px, 8vw, 72px); line-height: 1; }
+  .cr-para, .cr-voices__sub, .cr-brands__sub, .cr-partner__eyebrow { font-size: clamp(19px, 3.2vw, 28px); line-height: 1.2; }
+  .cr-h2, .cr-para { margin-bottom: 24px; }
+
+  .cr-hero { display: flex; flex-direction: column; gap: 28px; }
+  .cr-hero__title { font-size: clamp(48px, 9vw, 72px); line-height: .95; }
+  .cr-hero__lede { font-size: clamp(19px, 3.4vw, 28px); line-height: 1.15; }
+  .cr-hero__lede em { font-size: .93em; }
+  .cr-hero__ctas { display: flex; flex-wrap: wrap; gap: 14px; }
+  .cr-hero__logo { width: min(448px, 100%); height: auto; align-self: center; order: -1; }
+
+  .cr-class { text-align: center; }
+  .cr-eyebrow { font-size: clamp(13px, 2.2vw, 21px); margin-bottom: 16px; }
+  .cr-glow { margin-top: 32px; padding: 40px 28px; border-radius: 46px; background: #000; text-align: left; overflow: hidden; display: flex; flex-direction: column; gap: 24px; }
+  .cr-glow__bg { position: absolute; z-index: 0; object-fit: cover; }
+  .cr-glow > *:not(.cr-glow__bg) { position: relative; z-index: 1; }
+  .cr-glow__left { font-size: clamp(28px, 5vw, 41px); }
+  .cr-glow__rule { width: 60px; height: 1px; }
+  .cr-glow__lead { font-size: 22px; background-size: 100% 100%; }
+  .cr-glow__note { margin-top: 18px; }
+  .cr-dots { flex-direction: row; }
+
+  .cr-voices, .cr-expertise, .cr-partner { text-align: center; }
+  .cr-gallery { margin-top: 32px; position: relative; }
+  .cr-gallery__panels { position: relative; display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0; }
+  .cr-gallery__panels::before, .cr-gallery__panels::after { display: none; }
+  .cr-gallery__panel { position: static; flex: 0 0 min(72vw, 348px); height: auto; aspect-ratio: 348 / 577; scroll-snap-align: center; }
+  .cr-chev { display: none; }
+
+  .cr-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
+  .cr-tag { width: auto !important; height: 44px !important; padding: 0 18px; font-size: 18px !important; border-radius: 18px !important; }
+
+  .cr-brands__box { width: auto; height: auto; padding: 56px 20px; text-align: center; border-radius: 40px; }
+  .cr-brands__grid { width: auto; height: auto; margin: 32px auto; max-width: 1000px; }
+  .cr-brands__bg { display: none; }
+  .cr-brands__grid ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); grid-auto-rows: 88px; gap: 12px; }
+  .cr-brands__grid li { font-size: 26px; border-radius: 44px; border: 1px solid rgba(198, 159, 245, .35); }
+  .cr-brands__grid li.is-lit { background: radial-gradient(120% 140% at 100% 0, rgba(198,159,245,.45), transparent 55%), radial-gradient(100% 140% at 0 100%, rgba(158,93,221,.5), transparent 55%), #000; }
+
+  .cr-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 32px; }
+  .cr-card { position: relative; width: 100%; max-width: 400px; height: auto; aspect-ratio: 400 / 390; margin: 0 auto; container-type: inline-size; }
+  .cr-card__bg { width: 100%; height: 100%; }
+  .cr-card .t { position: absolute; white-space: nowrap; }
+  .cr-card__num   { left: 14.25%; top: 11%;  font-size: 10.75cqw; }
+  .cr-card__title { left: 14%;    top: 51%;  font-size: 7.75cqw; line-height: 1; }
+  .cr-card__body  { left: 14%;    top: 70.5%; font-size: 3.65cqw; line-height: 1.03; }
+  .cr-card br.d { display: inline; }
+
+  .cr-class, .cr-expertise { height: auto; }
+  .cr-class__stage, .cr-expertise__stage { position: static; height: auto; overflow: visible; }
+  .cr-ln { color: #fff; }
+  .cr-slide { position: static; opacity: 1; transform: none; }
+  .cr-slide + .cr-slide { margin-top: 24px; }
+  .cr-glow .cr-dots { display: none; }
+  .cr-gallery__view { position: static; width: auto; height: auto; overflow: visible; }
+  .cr-gallery__track { position: static; gap: 12px; transform: none !important; }
+  .cr-tag { transform: none !important; opacity: 1 !important; }
+  .cr-tag--ghost { display: none !important; }
+  .cr-brands__glow { display: none; }
+  .cr-hero__logo { position: relative; height: auto; aspect-ratio: 448 / 500; }
+  .cr-build__art { position: relative; }
+  .cr-build__art img { height: auto; }
+  .cr-btn--partner, .cr-btn--apply { display: inline-flex; margin-top: 8px; max-width: 100%; }
+  .cr-btn--apply { width: auto; padding: 0 28px; font-size: 19px; }
+  .cr-build { display: flex; flex-direction: column; }
+  .cr-build__alt { margin-top: 18px; }
+  .cr-build__art { width: min(449px, 100%); height: auto; margin-top: 40px; align-self: center; }
+}
+@media (max-width: 1100px) {
+  .t, .cr-btn, .cr-hero__logo, .cr-glow__rule, .cr-dots, .cr-chev, .cr-tag, .cr-brands__box, .cr-brands__grid, .cr-cards, .cr-build__art { inset: auto; }
+  .cr-glow { position: relative; inset: auto; width: auto; height: auto; }
+  .cr-gallery { width: auto; height: auto; left: auto; top: auto; }
+  .cr-cards .cr-card { left: auto; top: auto; }
+  .cr-build .cr-btn--apply { align-self: flex-start; }
+  .cr-cards { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .cr-brands__grid ul { grid-template-columns: repeat(3, 1fr); }
+  .cr-brands__title, .cr-brands__sub { padding-left: 0; }
+  .cr-build__alt a { display: inline-block; white-space: nowrap; }
+  .cr-card .cr-card__num { left: 14.25%; top: 11%; }
+  .cr-card .cr-card__title { left: 14%; top: 51%; }
+  .cr-card .cr-card__body { left: 14%; top: 70.5%; }
+}
+@media (max-width: 600px) {
+  .cr-brands__grid ul { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 64px; gap: 10px; }
+  .cr-brands__grid li { font-size: 19px; }
+}
+@media (max-width: 480px) {
+  .cr-hero__lede em { white-space: normal; }
+  .cr-btn--pink, .cr-btn--outline { flex: 1 1 auto; }
+}
+
+/* Per-line tracking fine-tune (measured against the design outlines) */
+.cr-ideas__title strong   { letter-spacing: -.024em; }
+.cr-partner__title strong { letter-spacing: -.031em; }
+.cr-build__title .glow    { letter-spacing: -.022em; }
+.cr-voices__title .glow   { letter-spacing: -.033em; }
+.cr-brands__title .glow   { letter-spacing: -.034em; }
+.cr-brands__title { padding-left: 34px; }
+.cr-brands__sub   { padding-left: 40px; }
+.cr-btn--partner, .cr-btn--apply { font-family: var(--font-display); font-weight: 700; font-size: 20px; }
+
+/* (zoom rule must stay last) */
+/* 1101–1439px: scale the fixed 1440 layout (js/main.js sets --fit) */
+@media (max-width: 1439px) and (min-width: 1101px) {
+  main { zoom: var(--fit, 1); }
+}
+.cr-class__title { letter-spacing: -.03em; }
+.cr-class__title strong { letter-spacing: -.035em; }
+.cr-glow__lead .w { letter-spacing: -.025em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-logo__star, .cr-logo__e { animation: none; }
+  .cr-word { opacity: 1; transform: none; }
+  .cr-card:hover { transform: none; }
+}

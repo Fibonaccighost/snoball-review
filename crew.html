@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CREW by Owled — Talent management for knowledge creators | Snoball</title>
+<meta name="description" content="CREW by Owled is talent management for knowledge creators — the voices that influence decisions we make every day.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/crew.css">
+</head>
+<body class="crew">
+
+<header class="nav">
+  <div class="nav__inner">
+    <a class="nav__logo" href="index.html" aria-label="Snoball home"><img src="assets/img/logo.svg" alt="Snoball"></a>
+    <nav class="nav__links" aria-label="Primary">
+      <div class="nav__drop">
+        <button class="nav__drop-btn" type="button" aria-expanded="false" aria-controls="nav-what">What we do <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="nav__menu" id="nav-what">
+          <a href="brands.html">Influencer marketing</a>
+          <a href="crew.html" aria-current="page">Creator management</a>
+        </div>
+      </div>
+      <a href="brands.html#how-it-works">How it works</a>
+      <a href="index.html#approach">Our approach</a>
+      <a href="crew.html">For creators</a>
+      <a class="btn-build" href="brands.html#contact">Let’s build</a>
+    </nav>
+    <button class="nav__toggle" aria-label="Menu"><span></span></button>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- Hero -->
+  <section class="cr-hero">
+    <h1 class="cr-hero__title t">We manage some of <br> the <em>most <span class="pink">impactful</span><br> knowledge <br> creators.</em></h1>
+    <p class="cr-hero__lede t">Talent management for knowledge creators —<br class="d"> the voices that influence decisions we make every<br class="d"> day, from <em class="pink">the products we choose to the<br class="d"> ideas we believe in.</em></p>
+    <div class="cr-hero__ctas">
+      <a class="cr-btn cr-btn--pink" href="#voices">Meet our creators</a>
+      <a class="cr-btn cr-btn--outline" href="#apply">Join Crew as a creator</a>
+    </div>
+    <!-- Logo in layers: the letters, then the pink e and star on top so they can move a little -->
+    <div class="cr-hero__logo" role="img" aria-label="CREW by Owled">
+      <img src="assets/img/crew-logo-base.png" alt="">
+      <img class="cr-logo__e" src="assets/img/crew-logo-e.png" alt="">
+      <img class="cr-logo__star" src="assets/img/crew-logo-star.png" alt="">
+    </div>
+  </section>
+
+  <!-- Building the internet's classrooms: pinned while the scroll steps through three slides (js/crew.js).
+       Left, the highlighted line moves down; right, the copy changes; the dot follows. -->
+  <section class="cr-class" data-class>
+    <div class="cr-class__stage" data-stick>
+      <p class="cr-eyebrow t">The people who teach us how to think, build &amp; grow</p>
+      <h2 class="cr-h2 cr-class__title t">Building the <strong class="pink">internet's <br> classrooms.</strong></h2>
+      <div class="cr-glow">
+        <img class="cr-glow__bg" src="assets/img/crew-glow-card.png" alt="">
+        <p class="cr-glow__left t"><span class="cr-ln is-on" data-step="0">Knowledge creators</span><br> <span class="cr-ln" data-step="1">are one of the</span><br class="d"> <span class="cr-ln" data-step="1">brightest corners of</span><br class="d"> <span class="cr-ln" data-step="2">the internet.</span></p>
+        <span class="cr-glow__rule"></span>
+        <div class="cr-glow__right">
+          <div class="cr-slide is-on">
+            <p class="cr-glow__lead t"><span class="w">They help people </span><strong>learn, build<br class="d"> and make better decisions</strong><br><span class="w">by sharing what they know.</span></p>
+          </div>
+          <div class="cr-slide">
+            <p class="cr-glow__lead t"><span class="w">They don't just influence.</span><br><strong>They explain what's next.</strong></p>
+          </div>
+          <div class="cr-slide">
+            <p class="cr-glow__lead t"><span class="w">We believe the next great creator<br class="d"> businesses will be built around</span><br><strong>expertise, trust and<br class="d"> long-term impact.</strong></p>
+          </div>
+        </div>
+        <div class="cr-dots" role="tablist" aria-label="Slides">
+          <button class="is-active" role="tab" aria-selected="true" aria-label="Slide 1"></button>
+          <button role="tab" aria-selected="false" aria-label="Slide 2"></button>
+          <button role="tab" aria-selected="false" aria-label="Slide 3"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Meet the voices -->
+  <section class="cr-voices" id="voices">
+    <h2 class="cr-h2 cr-voices__title t">Meet the voices <br> <span class="glow" data-text="moving culture.">moving culture.</span></h2>
+    <p class="cr-voices__sub t">From creators we represent to talent we've collaborated<br class="d"> with — this is where <em>their work comes alive.</em></p>
+    <div class="cr-gallery" data-gallery>
+      <!-- Six Instagram reel slots; three show at a time and the arrows slide the track (js/crew.js) -->
+      <div class="cr-gallery__panels">
+        <div class="cr-gallery__view"><div class="cr-gallery__track" data-reels>
+          <div class="cr-gallery__panel"><span class="cr-reel__label">Creator 01 · Video reel</span></div>
+          <div class="cr-gallery__panel"><span class="cr-reel__label">Creator 02 · Video reel</span></div>
+          <div class="cr-gallery__panel"><span class="cr-reel__label">Creator 03 · Video reel</span></div>
+          <div class="cr-gallery__panel"><span class="cr-reel__label">Creator 04 · Video reel</span></div>
+          <div class="cr-gallery__panel"><span class="cr-reel__label">Creator 05 · Video reel</span></div>
+          <div class="cr-gallery__panel"><span class="cr-reel__label">Creator 06 · Video reel</span></div>
+        </div></div>
+      </div>
+      <button class="cr-chev cr-chev--prev" data-prev aria-label="Previous">
+        <svg viewBox="1886 2468 23 38" width="23" height="38" aria-hidden="true"><path d="M1905.41 2471.78L1890.5 2485.11C1889.16 2486.31 1889.16 2488.39 1890.5 2489.59L1905.41 2502.92" fill="none" stroke-width="7" stroke-linecap="round" stroke="#fff" stroke-opacity=".3"/></svg>
+      </button>
+      <button class="cr-chev cr-chev--next" data-next aria-label="Next">
+        <svg viewBox="1886 2468 23 38" width="23" height="38" aria-hidden="true" style="transform:scaleX(-1)"><path d="M1905.41 2471.78L1890.5 2485.11C1889.16 2486.31 1889.16 2488.39 1890.5 2489.59L1905.41 2502.92" fill="none" stroke-width="7" stroke-linecap="round" stroke="#fff" stroke-opacity=".3"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- Expertise comes in many forms: pinned; the disciplines (from the original site) come out from behind the
+       headline, grow, and leave the view while the next ones arrive (js/crew.js) -->
+  <section class="cr-expertise" data-expertise>
+    <div class="cr-expertise__stage" data-stick>
+      <h2 class="cr-h2 cr-expertise__title t">Expertise comes in <br> <strong class="pink">many forms.</strong></h2>
+      <p class="cr-para cr-expertise__sub t">We work with knowledge creators across disciplines<br class="d"> that move people, teams and industries forward.</p>
+      <ul class="cr-tags" aria-label="Disciplines">
+        <li class="cr-tag cr-tag--fill cr-tag--biz">Business management</li>
+        <li class="cr-tag cr-tag--fill cr-tag--design">Design</li>
+        <li class="cr-tag cr-tag--ai">AI</li>
+        <li class="cr-tag cr-tag--prod">Productivity</li>
+        <li class="cr-tag cr-tag--tech">Tech</li>
+        <li class="cr-tag cr-tag--entre">Entrepreneurship</li>
+        <li class="cr-tag cr-tag--eng">Engineering</li>
+        <li class="cr-tag cr-tag--fill cr-tag--vc">Venture capital</li>
+        <li class="cr-tag cr-tag--mkt">Marketing</li>
+        <li class="cr-tag cr-tag--adv">Advertising</li>
+        <li class="cr-tag cr-tag--fill cr-tag--eco">Creator economy</li>
+        <li class="cr-tag cr-tag--film">Filmmaking</li>
+        <li class="cr-tag cr-tag--fin">Personal finance</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Brands -->
+  <section class="cr-brands">
+    <div class="cr-brands__box">
+      <h2 class="cr-h2 cr-brands__title t">Our creators have worked with <br> <span class="glow" data-text="some great names.">some great names.</span></h2>
+      <div class="cr-brands__grid">
+        <img class="cr-brands__bg" src="assets/img/crew-brand-grid-dark.jpg" alt="">
+        <img class="cr-brands__glow" src="assets/img/crew-brand-cell-lit.jpg" alt="" aria-hidden="true">
+        <!-- One name is lit at a time: the hovered one, or else it moves on its own (js/crew.js) -->
+        <ul data-brands>
+          <li><span>Higgsfield</span></li><li><span>Polsia</span></li><li class="is-lit"><span>OpenAI</span></li>
+          <li><span>Invideo</span></li><li><span>Gamma</span></li><li><span>Emergent</span></li>
+          <li><span>Lovable</span></li><li><span>Replit</span></li><li><span>Wispr Flow</span></li>
+        </ul>
+      </div>
+      <p class="cr-brands__sub t">From breakthrough AI products to platforms used by millions —<br class="d"> these are among the brands our creators have worked with</p>
+    </div>
+  </section>
+
+  <!-- Your ideas deserve an entire team -->
+  <section class="cr-ideas">
+    <h2 class="cr-h2 cr-ideas__title t">Your ideas deserve <br> <strong class="pink">an entire team.</strong></h2>
+    <p class="cr-para cr-ideas__sub t">Great creators should spend their time creating. We take on the<br class="d"> partnerships, negotiations and operations that help turn<br class="d"> knowledge into lasting careers.</p>
+    <div class="cr-cards">
+      <article class="cr-card">
+        <img class="cr-card__bg" src="assets/img/crew-idea-card-01.png" alt="">
+        <span class="cr-card__num t">01</span>
+        <h3 class="cr-card__title t"><span>Brand partnerships <br> that fit.</span><span aria-hidden="true">Brand partnerships <br> that fit.</span></h3>
+        <p class="cr-card__body t">Opportunities built around your expertise,<br class="d"> audience and genuine product interest —<br class="d"> not just the biggest one-off deal.</p>
+      </article>
+      <article class="cr-card">
+        <img class="cr-card__bg" src="assets/img/crew-idea-card-02.png" alt="">
+        <span class="cr-card__num t">02</span>
+        <h3 class="cr-card__title t"><span>Less admin. <br> More creating.</span><span aria-hidden="true">Less admin. <br> More creating.</span></h3>
+        <p class="cr-card__body t">Help with commercial conversations,<br class="d"> agreements, briefing, timelines, coordination<br class="d"> and invoicing.</p>
+      </article>
+      <article class="cr-card">
+        <img class="cr-card__bg" src="assets/img/crew-idea-card-03.png" alt="">
+        <span class="cr-card__num t">03</span>
+        <h3 class="cr-card__title t"><span>A creator business <br> built to last.</span><span aria-hidden="true">A creator business <br> built to last.</span></h3>
+        <p class="cr-card__body t">Think beyond sponsored posts: better<br class="d"> positioning, enduring relationships and<br class="d"> opportunities that compound over time.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- For ambitious brands -->
+  <section class="cr-partner" id="partner">
+    <p class="cr-partner__eyebrow t">For ambitious brands</p>
+    <h2 class="cr-h2 cr-partner__title t">Work with the people <br> <strong class="pink">people learn from.</strong></h2>
+    <p class="cr-para cr-partner__sub t">Find the voices who can explain your product, demonstrate its<br class="d"> value and earn real trust in the communities you care about.</p>
+    <a class="cr-btn cr-btn--partner" href="brands.html#contact">Partner with Crew</a>
+  </section>
+
+  <!-- Build your name -->
+  <section class="cr-build" id="apply">
+    <h2 class="cr-h2 cr-build__title t">Build your name. <br> <span class="glow" data-text="We'll back it.">We'll back it.</span></h2>
+    <p class="cr-para cr-build__sub t">Creating useful, original content in a world we<br class="d"> work in? Tell us about your audience, your<br class="d"> ideas and where you want to go next.</p>
+    <a class="cr-btn cr-btn--apply" href="brands.html#contact">Apply to Crew as a creator</a>
+    <p class="cr-build__alt t">Want to join the Snoball team instead? <a href="brands.html#contact">Apply to Snoball</a></p>
+    <!-- The centre circle is a glass lens (backdrop blur) over the orbs; it leans toward the pointer (js/crew.js) -->
+    <div class="cr-build__art" data-glass>
+      <img src="assets/img/crew-build-orbs-clean.jpg" alt="" width="449" height="559">
+      <span class="cr-glass" aria-hidden="true"></span>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <img class="footer__brand-logo" src="assets/img/logo-footer-small.svg" alt="Snoball">
+      <p class="footer__tagline">Managed creator campaigns for ambitious AI and tech brands.</p>
+      <a class="footer__cta" href="brands.html#contact">Make some momentum</a>
+    </div>
+    <div class="footer__col">
+      <h4>For brands</h4>
+      <a href="brands.html">Influencer Marketing</a>
+      <a href="brands.html#how-it-works">Growth programs</a>
+    </div>
+    <div class="footer__col">
+      <h4>Grow your career</h4>
+      <a href="crew.html#apply">Apply to Snoball</a>
+      <a href="crew.html">Crew talent management</a>
+      <a href="crew.html#apply">Apply to Crew as a creator</a>
+    </div>
+    <div class="footer__col">
+      <h4>Explore</h4>
+      <a href="brands.html#how-it-works">How the engine works</a>
+      <a href="index.html#approach">Our thinking</a>
+      <a href="brands.html#contact">Get in touch</a>
+    </div>
+    <img class="footer__wordmark" src="assets/img/logo-wordmark.svg" alt="">
+    <div class="footer__rule"></div>
+    <p class="footer__legal footer__legal--left">© 2026 Snoball. Made for momentum.</p>
+    <p class="footer__legal footer__legal--right">Designed for AI, tech, and the creators shaping what’s next.</p>
+  </div>
+</footer>
+<script src="js/main.js"></script>
+<script src="js/crew.js"></script>
+<script>window.__commentRemote={url:"https://rpwkdgypubyflujwgqig.supabase.co",key:"sb_publishable_K_lqISfxJCKa1waMj0X49Q_MTiQOgHV"};</script>
+<script src="comments.js" defer></script>
+</body>
+</html>
