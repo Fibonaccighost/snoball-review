@@ -59,10 +59,16 @@
   height: 1202px;
   text-align: center;
 }
+/* Hero rework (Ayush #12): the violet wash now runs edge to edge instead of stopping in a box at 1440px, and the
+   headline uses the home page's pairing — a light first line, then a bold line with the brand gradient. */
+.b-hero { overflow-x: visible !important; }
 .b-hero__glow {
   position: absolute;
-  left: 0; top: -77px;
-  width: 1440px; height: 1279px;
+  /* Between 1101 and 1439px <main> is zoomed by --fit, so the viewport width is divided back out */
+  left: calc(720px - 50vw / var(--fit, 1)); top: -77px;
+  width: calc(100vw / var(--fit, 1)); max-width: none; height: 1279px;
+  /* fades out at the bottom so the hero melts into the white section instead of stopping on a hard line */
+  -webkit-mask: linear-gradient(#000 62%, transparent 100%); mask: linear-gradient(#000 62%, transparent 100%);
   background: url(../assets/img/brands-hero-glow.jpg) 0 0 / 100% 100% no-repeat;
   pointer-events: none;
 }
@@ -72,6 +78,12 @@
   line-height: 78px;
 }
 .b-hero__l1, .b-hero__l2 { display: block; }
+.b-hero__l1 { font-weight: 300; letter-spacing: -0.05em; }
+.b-hero__l2 { font-weight: 700; letter-spacing: -0.05em; }
+.b-hero__l2 .b-grad--engine {
+  position: relative; padding: 0 .08em .14em 0; margin: 0 -.08em -.14em 0;
+  background-image: linear-gradient(90deg, #ee4cd8 0%, #c69ff5 55%, #7214c3 100%);
+}
 .b-hero__lede {
   position: absolute;
   left: 0; right: 0; top: 299px;
@@ -226,7 +238,7 @@
 .ws__bars span { font-size: 14px; line-height: 20px; color: #776b7e; padding-bottom: 8px; }
 
 /* ============================================================== CHAOS / STACK */
-.b-chaos { position: relative; height: calc(946px + 1800px); }
+.b-chaos { position: relative; height: calc(946px + 2600px); }
 .b-chaos__stage { position: sticky; top: 77px; height: 946px; }
 .b-chaos__title { position: absolute; left: 148px; top: 162px; }
 .b-chaos__copy {
@@ -751,3 +763,65 @@ em.b-tech__strong { font-style: italic; }
 @media (max-width: 1439px) and (min-width: 1101px) {
   main { zoom: var(--fit, 1); }
 }
+
+/* ---------- Icons (Ayush #15): Phosphor fill icons drawn in the current text colour, replacing the ✳ ✧ ✓ glyphs */
+.ic { display: inline-block; width: 1em; height: 1em; vertical-align: -0.125em; background: currentColor;
+  -webkit-mask: var(--i) center / contain no-repeat; mask: var(--i) center / contain no-repeat; }
+.ic--sparkle { --i: url(../assets/img/logos/ph-sparkle.svg); }
+.ic--check { --i: url(../assets/img/logos/ph-check.svg); }
+.ic--rocket { --i: url(../assets/img/logos/ph-rocket-launch.svg); }
+.ic--x { --i: url(../assets/img/logos/ph-x-logo.svg); }
+.ic--linkedin { --i: url(../assets/img/logos/ph-linkedin-logo.svg); }
+.ic--youtube { --i: url(../assets/img/logos/ph-youtube-logo.svg); }
+.ic--instagram { --i: url(../assets/img/logos/ph-instagram-logo.svg); }
+.sui__head .ic, .ws__plan-head .ic { width: 16px; height: 16px; }
+.sui__checks i .ic { width: 14px; height: 14px; }
+.sui__steps em .ic { width: 12px; height: 12px; vertical-align: -1px; }
+.sui__title { display: flex; align-items: center; gap: 12px; }
+.sui__title > span:not(.sui__title-ic) { margin-left: -4px; }
+.sui__title .sui__title-ic { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--b-pink-card); color: #a838d0; font-size: 20px; }
+.sui__channels { margin-top: 16px; display: flex; align-items: center; gap: 8px; }
+.sui__channels small { margin-right: 4px; font-size: 12px; line-height: 16px; color: #897b9a; }
+.sui__ch { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 999px; background: #faf9fc; box-shadow: inset 0 0 0 1px #eee9f3; font-size: 14px; line-height: 20px; font-weight: 700; color: #2c2432; }
+.sui__ch .ic { width: 16px; height: 16px; }
+.sui__ch--x .ic, .sui__av--x { color: #000; }
+.sui__ch--linkedin .ic, .sui__av--linkedin { color: #0a66c2; }
+.sui__ch--youtube .ic, .sui__av--youtube { color: #ff0033; }
+.sui__people i.sui__av { background: #fff; box-shadow: inset 0 0 0 1px #eee9f3; font-size: 22px; }
+.sui__title .sui__title-ic .ic { color: #a838d0; }
+.b-testi__copy strong { font-weight: 700; }
+
+/* ---------- Tech cards: the two bars at the bottom fill one after the other, like Instagram stories (user #84).
+   Constant speed is intended for a progress bar, so the fill is linear. */
+.b-tcard2__story { position: absolute; left: 22.5px; right: 22.5px; top: 340.5px; display: flex; gap: 4.5px; pointer-events: none; }
+.b-tcard2__story i { flex: 1; height: 3px; border-radius: 2px; background: rgba(255, 255, 255, .22); overflow: hidden; }
+.b-tcard2__story i::after { content: ""; display: block; height: 100%; background: #fff; transform-origin: 0 50%; transform: scaleX(0);
+  animation: b-story 9s linear infinite; }
+.b-tcard2__story i:nth-child(2)::after { animation-name: b-story-2; }
+.b-tcard2--2 .b-tcard2__story i::after { animation-delay: -2.2s; }
+@media (prefers-reduced-motion: reduce) { .b-tcard2__story i::after { animation: none; transform: scaleX(.5); } }
+
+/* Tech cards: the copy is split across the two stories (user #88). Story 1 shows the title, story 2 the detail;
+   each swap rises 8px and fades on the base curve, timed to the bars above (9s loop). */
+.b-tcard2__slides { position: relative; margin-top: 24px; height: 220px; }
+.b-tcard2__slide { position: absolute; left: 0; right: 17px; top: 0; animation: b-slide-1 9s linear infinite; }
+.b-tcard2__slide--2 { animation-name: b-slide-2; }
+.b-tcard2__slides .b-tcard2__title { margin-top: 0; font-size: 24px; line-height: 32px; }
+.b-tcard2__slides .b-tcard2__text { margin-top: 0; font-size: 16px; line-height: 24px; }
+.b-tcard2--2 .b-tcard2__slide { animation-delay: -2.2s; }
+.b-tcard2__slides .b-tcard2__text br { display: none; }
+.b-tcard2__slides .b-tcard2__text { text-wrap: pretty; }
+@media (prefers-reduced-motion: reduce) {
+  .b-tcard2__slides { height: auto; }
+  .b-tcard2__slide { position: static; animation: none; opacity: 1; transform: none; }
+  .b-tcard2__slide--2 { margin-top: 12px; }
+}
+.b-tcard2__slides .b-tcard2__title br { display: none; }
+.b-tcard2__slides .b-tcard2__title { text-wrap: balance; }
+
+/* Stories, Instagram style (user #90, #91): each bar fills in turn; the copy cuts to the next frame the moment a
+   bar completes; at the end of the loop every bar snaps back to empty at once and story 1 starts again. */
+@keyframes b-story { 0% { transform: scaleX(0); } 50%, 100% { transform: scaleX(1); } }
+@keyframes b-story-2 { 0%, 50% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+@keyframes b-slide-1 { 0%, 49.9% { opacity: 1; visibility: visible; } 50%, 100% { opacity: 0; visibility: hidden; } }
+@keyframes b-slide-2 { 0%, 49.9% { opacity: 0; visibility: hidden; } 50%, 100% { opacity: 1; visibility: visible; } }

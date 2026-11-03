@@ -96,20 +96,89 @@
     });
   }
 
+  // ---------- Hero: the logo star follows the cursor (mouse only; touch keeps the idle twinkle) ----------
+  const crHero = document.querySelector('.cr-hero');
+  const star = crHero && crHero.querySelector('.cr-logo__star');
+  if (star && !reduced && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    crHero.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse' || small.matches || logo.classList.contains('is-dragging')) return;
+      const r = star.getBoundingClientRect();
+      // Star centre sits at roughly 77% / 12.5% of the logo box (its transform origin)
+      const cx = r.left + r.width * 0.77, cy = r.top + r.height * 0.125;
+      const dx = clamp((e.clientX - cx) / 600, -1, 1), dy = clamp((e.clientY - cy) / 600, -1, 1);
+      crHero.classList.add('is-tracking');
+      star.style.setProperty('--sx', (dx * 14).toFixed(1) + 'px');
+      star.style.setProperty('--sy', (dy * 14).toFixed(1) + 'px');
+      star.style.setProperty('--sr', (dx * 18).toFixed(1) + 'deg');
+    });
+    crHero.addEventListener('pointerleave', () => {
+      star.style.setProperty('--sx', '0px'); star.style.setProperty('--sy', '0px'); star.style.setProperty('--sr', '0deg');
+    });
+  }
+
+  // ---------- Hero: the star and the e can be picked up and dragged around; let go and they glide home (user #85) ----------
+  const logo = document.querySelector('.cr-hero__logo');
+  if (logo && !reduced) {
+    // Each piece is a full-size layer, so grab by distance from the piece's centre (share of the logo box)
+    const pieces = [
+      { el: logo.querySelector('.cr-logo__star'), cx: 0.77, cy: 0.125, r: 0.16 },
+      { el: logo.querySelector('.cr-logo__e'), cx: 0.22, cy: 0.68, r: 0.2 },
+    ].filter((p) => p.el);
+    const hit = (e) => {
+      const b = logo.getBoundingClientRect();
+      const fx = (e.clientX - b.left) / b.width, fy = (e.clientY - b.top) / b.height;
+      return pieces.find((p) => Math.hypot(fx - p.cx, (fy - p.cy) * (b.height / b.width)) < p.r);
+    };
+    let drag = null;
+    logo.addEventListener('pointermove', (e) => {
+      if (drag) {
+        const z = logo.getBoundingClientRect().width / logo.offsetWidth; // zoomed between 1101 and 1439px
+        const dx = (e.clientX - drag.x) / z, dy = (e.clientY - drag.y) / z;
+        drag.p.el.style.transform = `translate(${dx}px, ${dy}px) rotate(${(dx * 0.06).toFixed(1)}deg) scale(1.06)`;
+        return;
+      }
+      logo.style.cursor = hit(e) ? 'grab' : '';
+    });
+    logo.addEventListener('pointerdown', (e) => {
+      const p = hit(e);
+      if (!p) return;
+      e.preventDefault();
+      clearTimeout(drop.t);
+      logo.setPointerCapture(e.pointerId);
+      drag = { p, x: e.clientX, y: e.clientY };
+      logo.classList.add('is-dragging');
+      p.el.classList.add('is-held');
+      logo.style.cursor = 'grabbing';
+    });
+    const drop = () => {
+      if (!drag) return;
+      const el = drag.p.el;
+      drag = null;
+      el.classList.remove('is-held');
+      // Keep the idle sway off until the glide home has finished, so the e doesn't snap
+      clearTimeout(drop.t);
+      drop.t = setTimeout(() => logo.classList.remove('is-dragging'), 700);
+      el.style.transform = ''; // the CSS transition glides it back to its place
+      logo.style.cursor = '';
+    };
+    logo.addEventListener('pointerup', drop);
+    logo.addEventListener('pointercancel', drop);
+  }
+
   // ---------- Expertise: pinned; disciplines come out from behind the headline, grow, and leave ----------
   const exp = document.querySelector('[data-expertise]');
   if (exp) {
     const stage = exp.querySelector('[data-stick]');
     const C = { x: 720, y: 400 }; // behind the headline
     const tags = [...exp.querySelectorAll('.cr-tag')].map((el, i) => {
-      const wave = i < 7 ? 0 : 1;
-      const k = wave ? i - 7 : i;
+      // Everything comes out in one go (Ayush #17), a few frames apart so it still reads as a burst
+      const wave = 1, k = i;
       // A blurred twin sits on the same spot: tags arrive blurred, turn sharp in place, then leave
       const ghost = el.cloneNode(true);
       ghost.classList.add('cr-tag--ghost');
       ghost.setAttribute('aria-hidden', 'true');
       el.after(ghost);
-      return { el, ghost, wave, delay: wave ? 0.46 + k * 0.016 : k * 0.016, x: 0, y: 0 };
+      return { el, ghost, wave, delay: 0.04 + k * 0.012, x: 0, y: 0 };
     });
     const measure = () => tags.forEach((t) => {
       t.x = t.el.offsetLeft + t.el.offsetWidth / 2 - C.x;
@@ -117,13 +186,19 @@
     });
     measure();
     addEventListener('resize', measure);
-    const SPAN = 0.42; // scroll share each tag takes to come out and leave
+    const SPAN = 0.9; // scroll share each tag takes to come out (they stay once out)
+    let expShown = null;
     tasks.push(() => {
       if (still()) { tags.forEach((t) => { t.el.style.transform = ''; t.el.style.opacity = ''; t.ghost.style.opacity = '0'; }); return; }
-      const p = pinProgress(exp, stage);
+      // Eased toward the scroll position, same feel as the home page's talk section
+      const target = pinProgress(exp, stage);
+      if (expShown === null) expShown = target;
+      expShown += (target - expShown) * 0.14;
+      if (Math.abs(target - expShown) < 0.0005) expShown = target;
+      const p = expShown;
       tags.forEach((t) => {
         let u = clamp((p - t.delay) / SPAN);
-        if (t.wave === 1) u = Math.min(u, 0.5); // the last wave stays in place when the pin ends
+        u = Math.min(u, 0.5); // once out, every tag stays in place
         // u 0 → 0.5: from the centre (small) out to its place; 0.5 → 1: keeps going, grows, and fades out of view
         const out = u <= 0.5 ? ease(u / 0.5) : 1 + (u - 0.5) * 2 * 1.4;
         const pos = 0.12 + 0.88 * Math.min(out, 1) + Math.max(0, out - 1);
@@ -135,6 +210,7 @@
         t.el.style.opacity = op * sharp;
         t.ghost.style.opacity = op * (1 - sharp);
       });
+      return expShown !== target;
     });
   }
 
@@ -183,8 +259,8 @@
       lit = i;
       cells.forEach((c, k) => c.classList.toggle('is-lit', k === i));
       if (glow) {
-        glow.style.setProperty('--cx', (i % 3) * 338.5 + 'px');
-        glow.style.setProperty('--cy', Math.floor(i / 3) * 142 + 'px');
+        glow.style.setProperty('--cx', (i % 4) * 248 + 'px');
+        glow.style.setProperty('--cy', Math.floor(i / 4) * 108 + 'px');
       }
     };
     light(Math.max(0, lit));

@@ -4,8 +4,9 @@
 section { position: relative; }
 
 /* ---------- Hero ---------- */
-.hero { height: 1140.6px; background: #000; color: #fff; overflow: hidden; }
-.hero__art { position: absolute; left: -169px; top: -59.2px; width: 1779px; height: 1001px; }
+/* Tightened (user #79) so the headline, people and the logo strip all fit in a ~900px-tall first screen */
+.hero { height: 1000px; background: #000; color: #fff; overflow: hidden; }
+.hero__art { position: absolute; left: -169px; top: -169px; width: 1779px; height: 1001px; }
 .hero__base { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; }
 /* The light around the characters (spot is 2000px wide, so from the centre it reaches the whole hero): hero-aura.jpg is the photo's glow and streaks on black (screen blend ignores black).
    The outer mask keeps it off the people and the floor. .hero__spot is a soft circle that follows the cursor and
@@ -29,12 +30,13 @@ section { position: relative; }
   transform: translate3d(calc(var(--gx, 0px) - var(--sx, 0px)), calc(var(--gy, 0px) - var(--sy, 0px)), 0); will-change: transform;
 }
 .hero__title {
-  position: absolute; left: 0; right: 0; top: 140.4px;
+  position: absolute; left: 0; right: 0; top: 56px;
   text-align: center; font-size: 72px; line-height: 78px;
 }
 .hero__title span { display: block; }
 .hero__l1 { font-weight: 300; letter-spacing: -0.06em; }
-.hero__l2 { position: relative; font-weight: 700; font-style: italic; letter-spacing: -0.074em; }
+/* Padding grows the painted box so the descenders (p, g) aren't cut off by background-clip: text */
+.hero__l2 { position: relative; font-weight: 700; font-style: italic; letter-spacing: -0.074em; padding: 0 0 16px; margin-bottom: -16px; }
 .hero__l2,
 .hero__l2::before {
   background: linear-gradient(90deg, #ee4cd8 0%, #fef4ce 34.13%, #c69ff5 66.35%, #7214c3 93.27%) center / 937px 100% no-repeat;
@@ -46,29 +48,29 @@ section { position: relative; }
 }
 .hero__title { isolation: isolate; }
 .hero__sub {
-  position: absolute; left: 0; right: 0; top: 310.5px;
+  position: absolute; left: 0; right: 0; top: 226px;
   text-align: center; font-size: 20px; line-height: 30px;
 }
 .hero__sub strong { font-weight: 700; }
 /* Brand strip: runs the full viewport width, right to left. Constant speed is intended, so it uses linear timing. */
-.hero__marquee { position: absolute; top: 956px; left: calc(720px - 50vw); width: 100vw; display: flex; overflow: hidden; }
+.hero__marquee { position: absolute; top: 812px; left: calc(720px - 50vw); width: 100vw; display: flex; overflow: hidden; }
 .hero__logos { list-style: none; margin: 0; padding: 0; display: flex; flex: none; animation: hero-marquee 36s linear infinite; }
 .hero__marquee:hover .hero__logos { animation-play-state: paused; }
 @keyframes hero-marquee { to { transform: translateX(-100%); } }
-.hero__logos li {
-  white-space: nowrap; padding-right: 48px;
-  font-size: 27.4px; line-height: 30px; font-weight: 700; letter-spacing: -0.058em; color: rgba(255,255,255,.93);
-}
-.hero__logos .is-italic { font-style: italic; }
-.hero__fade {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 105.6px;
-  background: linear-gradient(180deg, #000 0, #000 13.6px, #fff 100%);
-}
+.hero__logos li { flex: none; display: flex; align-items: center; height: 40px; padding-right: 64px; }
+/* Logos are recoloured to white so the strip reads as one row; sizes are tuned by eye so they look the same weight */
+.hero__logos img { height: 28px; width: auto; max-width: none; filter: brightness(0) invert(1); opacity: .9; }
+.hero__logos .is-sm img { height: 24px; }
+.hero__logos .is-lg img { height: 32px; }
+.hero__logos .is-text { font-size: 30px; line-height: 36px; font-weight: 700; letter-spacing: -0.04em; color: rgba(255,255,255,.9); white-space: nowrap; }
+/* The black hero meets the white section below in one clean edge: that section overlaps the hero by 48px with
+   rounded top corners (see .sides). */
+.hero__fade { display: none; }
 
 /* ---------- Two sides ---------- */
 /* Pinned scenes: the section is taller than its stage, and the stage sticks while the extra height scrolls by.
    js/home.js sets the stage's sticky `top` so it sits centred under the nav. */
-.sides { height: calc(1040.4px + 1500px); background: #fff; color: var(--ink); }
+.sides { height: calc(1040.4px + 3600px); background: #fff; color: var(--ink); margin-top: -48px; border-radius: 48px 48px 0 0; z-index: 1; }
 .sides__stage, .infl__stage { position: sticky; top: 0; }
 .sides__stage { height: 1040.4px; }
 .sides__title {
@@ -85,13 +87,14 @@ section { position: relative; }
 .sides__half--l { clip-path: inset(0 50% 0 0 round 60px 0 0 60px); }
 .sides__half--r { clip-path: inset(0 0 0 50% round 0 60px 60px 0); }
 .sides.is-split .sides__half { pointer-events: auto; }
-.sides__layer { position: absolute; inset: 0; background: url(../assets/img/two-sides-clean.jpg) 0 0 / 100% 100% no-repeat; }
-.sides__center { clip-path: inset(0 39.5% 0 40%); }
-.sides__hand { mix-blend-mode: screen; will-change: transform; }
-.sides__hand { --edge: 10px; }
-/* Inset past the image's light outline so it doesn't travel inward with the hand */
-.sides__hand--l { clip-path: inset(var(--edge) 60% var(--edge) var(--edge) round 64px 0 0 64px); }
-.sides__hand--r { clip-path: inset(var(--edge) var(--edge) var(--edge) 60.5% round 0 64px 64px 0); }
+/* The user's reference photo, rebuilt at 2x with crisp halftone dots (user #89, #92): a soft beam behind, and each
+   hand on its own layer whose forearm runs 300px past the card edge. The hands start pulled out toward the edges
+   and slide in as you scroll, so more of each arm enters the frame, until the fingertips touch the ring. */
+.sides__layer { position: absolute; inset: 0; background: url(../assets/img/sides-bg.jpg) 0 0 / 100% 100% no-repeat; }
+.sides__hand { position: absolute; top: 0; height: 100%; pointer-events: none; will-change: transform; background: 0 0 / 100% 100% no-repeat; }
+.sides__hand--l { left: -300px; width: 910px; background-image: url(../assets/img/sides-hand-l.png); }
+.sides__hand--r { left: 610px; width: 898px; background-image: url(../assets/img/sides-hand-r.png); }
+.sides__half.is-back .sides__hand { opacity: 0; }
 /* Ring on its own, screen-blended so its black square disappears into the panel and the hands pass over it */
 .sides__ring {
   position: absolute; left: 41.8%; top: 33.6%; width: 16.35%; height: 36.1%;
@@ -125,7 +128,8 @@ section { position: relative; }
 }
 .sides__eyebrow { font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #c69ff5; }
 .sides__label-title { font-size: 48px; line-height: 1; font-weight: 700; letter-spacing: -0.042em; white-space: nowrap; }
-.sides__label-sub { font-size: 20px; line-height: 28px; font-weight: 300; color: rgba(255,255,255,.72); max-width: 420px; }
+/* Regular weight and near-white so it stays readable once the card has shrunk (comment #6) */
+.sides__label-sub { font-size: 20px; line-height: 28px; font-weight: 400; color: rgba(255,255,255,.9); max-width: 420px; text-wrap: pretty; }
 .sides__label-go {
   width: 48px; height: 48px; margin-top: auto; border-radius: 50%; display: grid; place-items: center;
   font-size: 22px; background: #fff; color: #000; transition: transform .5s cubic-bezier(.22, 1, .36, 1);
@@ -136,8 +140,9 @@ section { position: relative; }
 .sides__half:focus-visible .sides__label-title { text-decoration: underline; text-underline-offset: 6px; }
 
 /* ---------- Brands that felt the impact ---------- */
-.impact { height: 1365.2px; background: #000; color: #fff; }
-.impact__title { position: absolute; left: 0; right: 0; top: 144.4px; text-align: center; font-size: 72px; line-height: 69px; isolation: isolate; }
+/* Made more compact (comment #7): the four cards sit in one row instead of a 2×2 grid */
+.impact { height: 760px; background: #000; color: #fff; }
+.impact__title { position: absolute; left: 0; right: 0; top: 112px; text-align: center; font-size: 72px; line-height: 69px; isolation: isolate; }
 .impact__title span { display: block; }
 .impact__l1 { font-weight: 300; letter-spacing: -0.018em; }
 .impact__l2 { position: relative; font-weight: 700; letter-spacing: -0.042em; }
@@ -147,32 +152,34 @@ section { position: relative; }
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .impact__l2::before { content: attr(data-text); position: absolute; inset: 0; filter: blur(24.3px); opacity: .69; z-index: -1; }
-.impact__sub { position: absolute; left: 0; right: 0; top: 308.5px; text-align: center; font-size: 20px; line-height: 30px; padding: 0 420px; }
+.impact__sub { position: absolute; left: 0; right: 0; top: 268px; text-align: center; font-size: 20px; line-height: 30px; padding: 0 420px; }
 .impact__sub strong { font-weight: 700; }
 /* The brand name rests in the middle; hover (or focus, or a tap on touch screens) lifts it to the top and the
    testimonial fades in under it. No flip. */
-.impact__card { position: absolute; width: 429px; height: 294px; outline: none; cursor: default; }
+.impact__grid { position: absolute; left: 84px; top: 424px; display: flex; gap: 24px; }
+.impact__card { position: relative; flex: none; width: 300px; height: 206px; outline: none; cursor: default; }
 .impact__bg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .impact__bg--lit { opacity: 0; transition: opacity .5s cubic-bezier(.22, 1, .36, 1); }
 .impact__brand {
-  position: absolute; left: 0; right: 0; top: 123px; text-align: center;
-  font-size: 48px; line-height: 48px; font-weight: 700; letter-spacing: -0.058em; color: #fff;
+  position: absolute; left: 0; right: 0; top: 85px; text-align: center;
+  font-size: 36px; line-height: 40px; font-weight: 700; letter-spacing: -0.058em; color: #fff;
   text-shadow: 0 0 24px rgba(238, 76, 216, .45);
   transition: transform .6s cubic-bezier(.22, 1, .36, 1);
 }
 .impact__card p {
-  position: absolute; left: 0; right: 0; top: 110px; text-align: center;
-  font-size: 18px; line-height: 28px; color: rgba(255, 255, 255, .82);
+  position: absolute; left: 0; right: 0; top: 76px; padding: 0 24px; text-align: center; text-wrap: pretty;
+  font-size: 14px; line-height: 20px; color: rgba(255, 255, 255, .82);
   opacity: 0; transform: translateY(12px);
   transition: opacity .3s cubic-bezier(.22, 1, .36, 1), transform .5s cubic-bezier(.22, 1, .36, 1);
 }
 .impact__card:hover .impact__bg--lit, .impact__card:focus-visible .impact__bg--lit, .impact__card.is-open .impact__bg--lit { opacity: 1; }
-.impact__card:hover .impact__brand, .impact__card:focus-visible .impact__brand, .impact__card.is-open .impact__brand { transform: translateY(-72px) scale(.62); }
+.impact__card:hover .impact__brand, .impact__card:focus-visible .impact__brand, .impact__card.is-open .impact__brand { transform: translateY(-48px) scale(.62); }
 .impact__card:hover p, .impact__card:focus-visible p, .impact__card.is-open p { opacity: 1; transform: none; transition-delay: .08s; }
-.impact__card:focus-visible { border-radius: 24px; box-shadow: 0 0 0 2px #fff; }
+.impact__card p br { display: none; }
+.impact__card:focus-visible { border-radius: 16px; box-shadow: 0 0 0 2px #fff; }
 
 /* ---------- Influencer marketing ---------- */
-.infl { height: calc(1008.8px + 1600px); background: #000; }
+.infl { height: calc(1008.8px + 2000px); background: #000; }
 .infl__stage { height: 1008.8px; overflow: hidden; background: #000 url(../assets/img/influencer-bg.jpg) center -30.2px / 1920px 1091px no-repeat; }
 .infl__stage .sec__inner { will-change: transform, opacity; }
 /* Eyelids: each is a black panel with an elliptical bite on its inner edge, so the gap between them is an eye shape */
@@ -180,18 +187,20 @@ section { position: relative; }
 .infl__lid--top { top: 0; background: radial-gradient(70% 30% at 50% 100%, transparent 98%, #000 100%); transform: translateY(var(--lid, 0%)); }
 .infl__lid--bottom { bottom: 0; background: radial-gradient(70% 30% at 50% 0, transparent 98%, #000 100%); transform: translateY(calc(var(--lid, 0%) * -1)); }
 .infl.is-open .infl__lid { display: none; }
-.infl__title, .infl__blur { z-index: 2; will-change: filter, opacity; }
+.infl__title, .infl__blur { z-index: 2; will-change: transform, opacity; }
+.infl__title { transform-origin: 50% 0; }
 .like { z-index: 1; opacity: 0; will-change: transform, opacity; }
 .infl__title {
   position: absolute; left: 572px; width: 400px; top: 245.4px; text-align: center;
-  font-size: 70px; line-height: 70px; font-weight: 500; letter-spacing: -0.022em; color: var(--ink-2);
+  font-size: 70px; line-height: 70px; font-weight: 500; letter-spacing: -0.035em; color: var(--ink);
 }
 .infl__blur {
   position: absolute; left: 520px; width: 500px; top: 393px; text-align: center;
   font-size: 64px; line-height: 75px; font-weight: 500; letter-spacing: -0.035em;
-  color: var(--ink); opacity: .48; filter: blur(7.23px); user-select: none;
+  color: var(--ink); opacity: 0;
 }
 .infl__sub { position: absolute; left: 0; width: 1544px; top: 568px; text-align: center; font-size: 19.8px; line-height: 30px; color: var(--ink); padding: 0 340px; }
+.infl__sub strong { font-weight: 700; }
 .btn-glow {
   /* Widened from the design's 316px for the final copy, keeping the same centre */
   position: absolute; left: 571px; top: 708.4px; width: 400px; height: 67px; white-space: nowrap;
@@ -206,10 +215,19 @@ section { position: relative; }
   padding-left: 57px; display: flex; align-items: center;
   font-size: 24px; letter-spacing: -0.048em; color: #5f5f5f;
 }
+/* Each bubble carries its platform's mark in that platform's colour (comment #9). Icons: Phosphor, fill style. */
 .like::before {
-  content: ""; position: absolute; left: 23px; top: 13px; width: 25px; height: 23px;
-  background: url(../assets/img/heart.svg) center / contain no-repeat;
+  content: ""; position: absolute; left: 22px; top: 12px; width: 26px; height: 26px;
+  background: var(--like-c, #5f5f5f);
+  -webkit-mask: var(--icon) center / contain no-repeat; mask: var(--icon) center / contain no-repeat;
 }
+.like--x { --like-c: #000; --icon: url(../assets/img/logos/ph-x-logo.svg); }
+.like--youtube { --like-c: #ff0033; --icon: url(../assets/img/logos/ph-youtube-logo.svg); }
+.like--instagram { --like-c: #e1306c; --icon: url(../assets/img/logos/ph-instagram-logo.svg); }
+.like--linkedin { --like-c: #0a66c2; --icon: url(../assets/img/logos/ph-linkedin-logo.svg); }
+.like--tiktok { --like-c: #000; --icon: url(../assets/img/logos/ph-tiktok-logo.svg); }
+.like--heart { --like-c: var(--pink); --icon: url(../assets/img/logos/ph-heart-fill.svg); }
+.like--share { --like-c: #7f22c8; --icon: url(../assets/img/logos/ph-share-fat-fill.svg); }
 
 /* ---------- CREW ---------- */
 .crew { height: 846px; background: #000; color: #fff; }
@@ -223,7 +241,9 @@ section { position: relative; }
 .crew__sub { position: absolute; left: 731px; top: 463.6px; width: 680px; font-size: 20px; line-height: 30px; }
 
 /* ---------- Let's make the internet talk about you ---------- */
-.talk { height: 1199.6px; background: #fff; color: var(--ink); z-index: 1; }
+/* Pinned: the stage holds while the extra height scrolls by and the orb rolls (js/home.js) */
+.talk { height: calc(1199.6px + 1400px); background: #fff; color: var(--ink); z-index: 1; }
+.talk__stage { position: sticky; top: 0; height: 1199.6px; }
 /* Pill: black and white, with colour revealed in a circle around the pointer (js/home.js sets --x, --y and toggles .is-on) */
 @property --reveal { syntax: "<length>"; inherits: true; initial-value: 0px; }
 .talk__pill {
@@ -272,15 +292,19 @@ section { position: relative; }
   .infl__stage .sec__inner { transform: none !important; opacity: 1 !important; }
   .infl .btn-glow { translate: none !important; }
   .infl__sub { opacity: 1 !important; }
+  .infl__title, .infl__blur { opacity: 1 !important; transform: none !important; }
   .sec__inner { width: auto; padding: 72px 24px; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
   .sec__inner > * { position: static !important; width: auto !important; height: auto !important; max-width: 100%; padding: 0 !important; margin: 0 !important; }
   .hero__art { order: 5; width: 100% !important; aspect-ratio: 1779 / 1001; position: relative !important; left: auto !important; top: auto !important; }
   .hero__title, .sides__title, .impact__title, .infl__title, .infl__blur, .crew__title, .talk__title { font-size: clamp(40px, 8vw, 72px); line-height: 1.02; white-space: normal; }
   .hero__marquee { order: 6; width: calc(100% + 48px) !important; max-width: none; margin: 0 -24px !important; }
-  .hero__logos li { font-size: 22px; padding-right: 32px; }
+  .hero__logos li { padding-right: 40px; }
+  .hero__logos img { height: 22px; } .hero__logos .is-sm img { height: 18px; } .hero__logos .is-lg img { height: 24px; }
+  .hero__logos .is-text { font-size: 24px; line-height: 32px; }
+  .sides { margin-top: -32px; border-radius: 32px 32px 0 0; }
   .hero__fade { display: none; }
   /* Small screens: no pinning; the sides card shows its split state as two stacked link cards */
-  .sides__stage, .infl__stage { position: static; height: auto !important; }
+  .sides__stage, .infl__stage, .talk__stage { position: static; height: auto !important; }
   .sides__card { width: 100% !important; position: relative !important; left: auto !important; top: auto !important; display: flex; flex-direction: column; gap: 16px; transform: none !important; }
   .sides__half { position: relative; inset: auto; aspect-ratio: 604 / 548; clip-path: none !important; transform: none !important; border-radius: 32px; overflow: hidden; pointer-events: auto; }
   .sides__half .sides__layer { width: 200%; }
@@ -317,3 +341,4 @@ section { position: relative; }
   .talk__orb { width: 280px !important; }
   .talk__title, .talk__sub { text-align: center; }
 }
+.sides { overflow-x: clip; } /* the hand layers run past the card; clip does not break the sticky stage */

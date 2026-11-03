@@ -95,17 +95,22 @@
     const handL = sides.querySelector('.sides__hand--l');
     const handR = sides.querySelector('.sides__hand--r');
     const ring = sides.querySelector('.sides__ring');
-    // Fingertips sit at 38.7% and 61.3% of the card; the ring spans 43.5%–57%. These shifts make them touch.
-    const REACH_L = 58, REACH_R = -51;
+    // Each hand starts a little way out toward its edge (user #92) and slides in until its fingertips meet the
+    // ring's rim, short of the photo's pose where they reach inside it (user #96)
+    const AWAY = 150, END_L = -46, END_R = 56;
+    // The scene holds still for a moment before anything moves and again once the cards have flipped (comment #19).
     const render = (p) => {
-      const shrink = ease(range(p, 0, 0.5));
-      const reach = easeInOut(range(p, 0.05, 0.5));
-      const flash = range(p, 0.5, 0.6);
-      const split = ease(range(p, 0.56, 0.74));
-      const flip = easeInOut(range(p, 0.74, 0.94));
-      card.style.transform = `scale(${1 - 0.3 * shrink})`;
-      handL.style.transform = `translateX(${REACH_L * reach}px)`;
-      handR.style.transform = `translateX(${REACH_R * reach}px)`;
+      // Paced like the "Let's talk" curve (user): each movement gets roughly 1000px of scroll, the flip the most.
+      // The hands stop the moment their fingertips touch the ring; the ring flashes and the card splits right then
+      // (user #96)
+      const shrink = ease(range(p, 0.04, 0.32));
+      const reach = easeInOut(range(p, 0.04, 0.32));
+      const flash = range(p, 0.32, 0.36);
+      const split = ease(range(p, 0.36, 0.46)); // starts as the flash ends, so the ring's square never shows in the gap
+      const flip = easeInOut(range(p, 0.48, 0.8));
+      card.style.transform = `scale(${1 - 0.2 * shrink})`;
+      handL.style.transform = `translateX(${(END_L - AWAY * (1 - reach)).toFixed(1)}px)`;
+      handR.style.transform = `translateX(${(END_R + AWAY * (1 - reach)).toFixed(1)}px)`;
       ring.style.opacity = 1 - flash;
       ring.style.transform = `scale(${1 + 0.4 * flash})`;
       const gap = 36 * split, r = 60 * split;
@@ -117,11 +122,26 @@
       halfR.style.transform = `translateX(${gap}px) perspective(1600px) rotateY(${turn}deg)`;
       halfL.classList.toggle('is-back', turn > 90);
       halfR.classList.toggle('is-back', turn > 90);
-      halfL.style.clipPath = `inset(0 50% 0 0 round 60px ${r}px ${r}px 60px)`;
-      halfR.style.clipPath = `inset(0 0 0 50% round ${r}px 60px 60px ${r}px)`;
+      // Until the split, the halves overlap by a pixel so no hairline shows down the middle
+      const lap = split > 0 ? 0 : 1;
+      halfL.style.clipPath = `inset(0 calc(50% - ${lap}px) 0 0 round 60px ${r}px ${r}px 60px)`;
+      halfR.style.clipPath = `inset(0 0 0 calc(50% - ${lap}px) round ${r}px 60px 60px ${r}px)`;
       sides.classList.toggle('is-split', flip > 0.5);
     };
-    tasks.push(() => { render(small.matches || reduced ? 1 : pinProgress(sides, stage)); });
+    // The scene eases after the scroll exactly like the talk section, with a gentle speed limit so a big jump
+    // still plays through instead of snapping the cards over (comment #5)
+    let shown = null;
+    const MAX_STEP = 0.02;
+    tasks.push(() => {
+      if (small.matches || reduced) { render(1); return; }
+      const target = pinProgress(sides, stage);
+      if (shown === null) shown = target;
+      const d = (target - shown) * 0.14;
+      shown += Math.sign(d) * Math.min(Math.abs(d), MAX_STEP);
+      if (Math.abs(target - shown) < 0.0005) shown = target;
+      render(shown);
+      return shown !== target;
+    });
   }
 
   // ---------- Influencer marketing: eye opens, headline lines trade focus, likes fly out and count up ----------
@@ -137,13 +157,15 @@
     // The button starts in the middle of the stage and travels down to its place; the paragraph it passes over
     // fades in behind it
     const BTN_FROM = 1008.8 / 2 - (708.4 + 67 / 2);
-    // Bubbles start hidden behind the "Influencer marketing" headline and travel out to their places
-    const ORIGIN = { x: 572 + 200, y: 245.4 + 70 };
+    // Bubbles start a little way in from their places, beside the text but never over it, and drift outward while
+    // they fade in and count up (Devang #21: they must not overlap the text)
+    const DRIFT = 120;
     const likes = [...infl.querySelectorAll('.like')].map((el) => {
-      const x = parseFloat(el.style.left) + 68, y = parseFloat(el.style.top) + 25.5;
-      return { el, value: +el.dataset.value, dx: ORIGIN.x - x, dy: ORIGIN.y - y };
+      const x = parseFloat(el.style.left) + 68;
+      return { el, value: +el.dataset.value, dx: x < 772 ? DRIFT : -DRIFT };
     });
     const fmt = (n) => (n < 1000 ? String(Math.round(n)) : n < 100000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : Math.round(n / 1000) + 'k');
+    let inflShown = null;
     let opened = false;
     const openEye = () => {
       opened = true;
@@ -151,30 +173,47 @@
       // A blink: crack open, half close, then open fully
       lidTop.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-16%)', offset: 0.28 }, { transform: 'translateY(-7%)', offset: 0.45 }, { transform: 'translateY(-101%)' }], timing);
       lidBottom.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(16%)', offset: 0.28 }, { transform: 'translateY(7%)', offset: 0.45 }, { transform: 'translateY(101%)' }], timing)
-        .finished.then(() => infl.classList.add('is-open'));
+        .finished.then(() => infl.classList.add('is-open'), () => {}); // rejected when closeEye cancels it
       inner.animate([{ transform: 'scale(1.08)', opacity: 0.35 }, { transform: 'scale(1.08)', opacity: 0.35, offset: 0.3 }, { transform: 'none', opacity: 1 }], { duration: 1900, easing: CURVE });
     };
+    const closeEye = () => {
+      opened = false;
+      infl.classList.remove('is-open');
+      [lidTop, lidBottom, inner].forEach((el) => el.getAnimations().forEach((a) => a.cancel()));
+    };
     if (reduced || small.matches) { opened = true; infl.classList.add('is-open'); }
+    // "Influencer marketing" steps back: smaller, a little lighter and higher, but always sharp (Ayush #8 over Devang #20).
+    // "that moves the needle." rises into the space in front of it.
     const render = (p) => {
-      const t = easeInOut(range(p, 0.28, 0.8));
-      title.style.filter = `blur(${(7.23 * t).toFixed(2)}px)`;
-      title.style.opacity = 1 - 0.52 * t;
-      second.style.filter = `blur(${(7.23 * (1 - t)).toFixed(2)}px)`;
-      second.style.opacity = 0.48 + 0.52 * t;
+      const t = easeInOut(range(p, 0.16, 0.72));
+      // It settles just above "that moves the needle." at the same size, weight and colour, so the two read as
+      // one headline (user #80)
+      title.style.transform = `translateY(${(12 * t).toFixed(1)}px) scale(${(1 - 0.086 * t).toFixed(3)})`;
+      second.style.transform = `translateY(${(24 * (1 - t)).toFixed(1)}px)`;
+      second.style.opacity = range(t, 0.2, 0.9).toFixed(3);
       btn.style.translate = `0 ${(BTN_FROM * (1 - t)).toFixed(1)}px`; // translate, so the hover lift (transform) still works
       sub.style.opacity = range(t, 0.55, 1);
       likes.forEach((l) => {
         const k = 1 - t;
-        l.el.style.transform = `translate(${l.dx * k}px, ${l.dy * k}px) scale(${0.6 + 0.4 * t})`;
-        l.el.style.opacity = range(t, 0, 0.15);
+        l.el.style.transform = `translateX(${l.dx * k}px) scale(${0.8 + 0.2 * t})`;
+        l.el.style.opacity = range(t, 0, 0.3);
         l.el.textContent = fmt(l.value * t);
       });
     };
     tasks.push(() => {
-      if (small.matches || reduced) return;
+      if (small.matches) return;
+      if (reduced) { render(1); return; }
       const r = infl.getBoundingClientRect();
       if (!opened && r.top <= parseFloat(stage.style.top || 0) * zoom() + innerHeight * 0.25) openEye();
-      render(pinProgress(infl, stage));
+      // Once the section is fully off screen, close the eye again so it blinks open on every visit (user #81)
+      if (opened && (r.top > innerHeight || r.bottom < 0)) closeEye();
+      // Eased toward the scroll position, same feel as the talk section
+      const target = pinProgress(infl, stage);
+      if (inflShown === null) inflShown = target;
+      inflShown += (target - inflShown) * 0.14;
+      if (Math.abs(target - inflShown) < 0.0005) inflShown = target;
+      render(inflShown);
+      return inflShown !== target;
     });
   }
 
@@ -243,15 +282,16 @@
       });
       setStep(Math.max(1, passed));
     };
-    // The orb trails the scroll and eases after it, so you see it roll along the line rather than jump with the page
+    // The section pins (Devang #22): the frame holds still first, then the orb rolls down the line, revealing
+    // SPARK, TRACTION and MOMENTUM, then holds again before the page moves on. The orb trails the scroll and eases
+    // after it, so you see it roll rather than jump with the page.
+    const stage = talk.querySelector('[data-stick]');
     let spin = 0, lastAlong = 0, shown = null;
     tasks.push(() => {
       if (small.matches || reduced) { orb.style.transform = ''; labels.forEach((l) => l.classList.add('is-on')); setStep(3); return; }
-      const r = talk.getBoundingClientRect();
-      const start = innerHeight * 0.75, end = NAV - 180 * zoom();
-      const target = clamp((start - r.top) / (start - end));
+      const target = range(pinProgress(talk, stage), 0.12, 0.82);
       if (shown === null) { shown = target; lastAlong = target * endLen; } // first frame: start in place
-      shown += (target - shown) * 0.045;
+      shown += (target - shown) * 0.14;
       if (Math.abs(target - shown) < 0.0005) shown = target;
       render(shown);
       return shown !== target;

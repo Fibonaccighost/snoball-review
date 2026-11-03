@@ -231,3 +231,7 @@ main.page > section { overflow-x: clip; }
   .footer__inner { grid-template-columns: 1fr 1fr; }
   .footer__legal--right { grid-column: 1 / -1; justify-self: start; }
 }
+
+/* Gradient text is painted only inside its box. Where a box is shorter than the letters (tight display line heights)
+   the descenders of g, p, y were cut off (user #97, Devang #27). Extra paint room below, cancelled in layout. */
+.grad-text, .glow, .b-grad, .impact__l2 { padding-bottom: .2em; margin-bottom: -.2em; }

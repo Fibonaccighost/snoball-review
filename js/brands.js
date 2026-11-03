@@ -101,6 +101,7 @@
       { label: 'Tech operator', platform: 'X', topic: 'Productivity tools' },
       { label: 'Product reviewer', platform: 'YouTube', topic: 'Tech & software' },
       { label: 'Growth strategist', platform: 'LinkedIn', topic: 'Growth & marketing' },
+      { label: 'AI explainer', platform: 'Instagram', topic: 'AI tools & tips' },
     ];
     const people = ws.querySelector('[data-people]');
     const paint = (channel) => {
@@ -141,14 +142,20 @@
     const SCALE = [1, 0.9015, 0.8348, 0.78];
     const DROP = [0, 67.7, 122.9, 168];
     const last = cards.length - 1;
+    let chaosShown = null;
     cards.forEach((c, i) => { c.el.style.zIndex = cards.length - i; });
     tasks.push(() => {
       if (still()) {
         cards.forEach((c) => { c.el.style.transform = c.el.style.opacity = c.body.style.opacity = c.ui.style.opacity = ''; c.el.classList.add('is-front'); });
         return;
       }
-      // Each step holds for a moment, then eases to the next
-      const t = clamp((pinProgress(chaos, stage) - 0.06) / 0.88) * last;
+      // Eased toward the scroll position (same feel as the home page's talk section); each step holds for a
+      // moment, then eases to the next
+      const target = pinProgress(chaos, stage);
+      if (chaosShown === null) chaosShown = target;
+      chaosShown += (target - chaosShown) * 0.14;
+      if (Math.abs(target - chaosShown) < 0.0005) chaosShown = target;
+      const t = clamp((chaosShown - 0.06) / 0.88) * last;
       const k = Math.min(Math.floor(t), last - 1);
       const s = k + easeInOut(clamp((t - k - 0.2) / 0.6));
       cards.forEach((c, i) => {
@@ -165,64 +172,52 @@
         c.ui.style.opacity = clamp(1 - Math.abs(f) * 1.2).toFixed(3);
         c.el.classList.toggle('is-front', Math.abs(f) < 0.35);
       });
+      return chaosShown !== target;
     });
   }
 
-  // ---------- Testimonials: the frames stay put and the four perspectives step through them on their own ----------
-  // Frame positions from the design (inside the track): 01 low, 02 high, 03 low. A card waits off to the right
-  // before it enters frame 03 and leaves to the left after frame 01.
+  // ---------- Testimonials: the original staggered layout (frame 01 low, 02 high, 03 low), now gliding on its
+  // own at a steady pace (user #87). Each card rides a smooth wave between the low and high frames as it moves
+  // left; hovering eases the row to a stop and leaving eases it back up. One rAF loop, transforms only.
   const testi = document.querySelector('[data-testi]');
   if (testi) {
-    const track = testi.querySelector('.b-testi__track');
     const rail = testi.querySelector('[data-track]');
     const cards = [...rail.children];
     const n = cards.length;
     const STEP = 321.7 + 58.1;
-    // f = -1 (gone left), 0 (frame 01), 1 (frame 02), 2 (frame 03), 3 (waiting right)
-    const X = [-STEP, 0, STEP, 2 * STEP, 3 * STEP];
-    const Y = [56.6, 160.6, 56.6, 160.6, 56.6];
-    const OP = [0, 1, 1, 1, 0];
-    const at = (pts, f) => lerp(pts, f + 1);
-    let s = 0;
-    const render = () => {
+    const LOW = 160.6, HIGH = 56.6;
+    const SPEED = 1 / 4.5; // frames per second: one card moves one frame every 4.5s
+    // f = position in frames: -1 gone left, 0 frame 01, 1 frame 02, 2 frame 03, 3 waiting right
+    const render = (s) => {
       cards.forEach((c, i) => {
         let f = (((i - s) % n) + n) % n;
-        if (f > n - 1) f -= n; // range (-1, 3]
-        c.style.transform = `translate3d(${at(X, f).toFixed(1)}px, ${at(Y, f).toFixed(1)}px, 0)`;
-        c.style.opacity = at(OP, f).toFixed(3);
+        if (f > n - 1) f -= n; // range (-1, n-1]
+        const y = (LOW + HIGH) / 2 + ((LOW - HIGH) / 2) * Math.cos(Math.PI * f);
+        const op = f < 0 ? 1 + f : f > 2 ? Math.max(0, 3 - f) : 1;
+        c.style.transform = `translate3d(${(f * STEP).toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
+        c.style.opacity = op.toFixed(3);
       });
     };
-    // One step = a 1.1s time-based tween (no scroll involved, so it stays smooth)
-    let busy = false;
-    const step = (dir) => {
-      if (busy) return;
-      busy = true;
-      const from = s, start = performance.now(), DUR = 1100;
-      const tick = (now) => {
-        const t = clamp((now - start) / DUR);
-        s = from + dir * easeInOut(t);
-        render();
-        if (t < 1) requestAnimationFrame(tick);
-        else { s = ((Math.round(s) % n) + n) % n; busy = false; }
-      };
-      requestAnimationFrame(tick);
+    let s = 0, v = SPEED, last = 0, visible = false, hovered = false, raf = 0;
+    const tick = (now) => {
+      const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
+      last = now;
+      v += ((hovered ? 0 : SPEED) - v) * Math.min(1, dt * 4);
+      s = (s + v * dt) % n;
+      render(s);
+      if (visible && !still() && !document.hidden) raf = requestAnimationFrame(tick);
+      else { raf = 0; last = 0; }
     };
-    render();
-    // Steps every 3.2s while the section is on screen and not hovered; an arrow click restarts the wait
-    let visible = false, hovered = false, timer = 0;
-    new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0.3 }).observe(testi);
+    const run = () => { if (!raf && visible && !still() && !document.hidden) raf = requestAnimationFrame(tick); };
+    if (!small.matches) render(0); // reduced motion keeps the static staggered frames
+    new IntersectionObserver(([en]) => { visible = en.isIntersecting; run(); }).observe(testi);
     testi.addEventListener('pointerenter', () => { hovered = true; });
     testi.addEventListener('pointerleave', () => { hovered = false; });
-    const auto = () => { clearInterval(timer); timer = setInterval(() => { if (visible && !hovered && !document.hidden && !still()) step(1); }, 3200); };
-    if (!reduced) auto();
-    const go = (dir) => {
-      if (still()) { track.scrollBy({ left: dir * (cards[0].getBoundingClientRect().width + 24), behavior: 'smooth' }); return; }
-      step(dir);
-      if (!reduced) auto();
-    };
-    testi.querySelector('[data-prev]')?.addEventListener('click', () => go(-1));
-    testi.querySelector('[data-next]')?.addEventListener('click', () => go(1));
-    small.addEventListener('change', () => { if (still()) cards.forEach((c) => { c.style.transform = c.style.opacity = ''; }); else render(); });
+    document.addEventListener('visibilitychange', run);
+    small.addEventListener('change', () => {
+      if (small.matches) cards.forEach((c) => { c.style.transform = c.style.opacity = ''; }); else render(s);
+      run();
+    });
   }
 
   // ---------- Case studies: the box shows the selected study; its scroll thumb follows the content ----------
