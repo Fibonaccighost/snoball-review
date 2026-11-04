@@ -266,10 +266,11 @@
 .b-stack__card:nth-child(3) { background: linear-gradient(#f2e4f7, #f2e4f7) padding-box, linear-gradient(90deg, #fff, #e263e0) border-box; }
 .b-stack__card:nth-child(4) { background: linear-gradient(#eadcf4, #eadcf4) padding-box, linear-gradient(90deg, #fff, #e263e0) border-box; }
 .b-stack__media { position: absolute; left: 553px; top: 7.6px; width: 577.8px; height: 357.4px; border-radius: 0 21px 21px 0; background: #fff; overflow: hidden; }
-.b-stack__body { position: relative; width: 520px; padding: 62.5px 0 0 22.4px; }
+/* 40px of space from the card edge (1px border + 39px); wider than the design's 24px at the user's request (#100) */
+.b-stack__body { position: relative; width: 531px; padding: 62.5px 0 0 39px; }
 .b-stack__body, .sui { will-change: opacity; }
 .b-stack__title {
-  margin-top: 32px;
+  margin-top: 30px;
   font-size: 24px;
   line-height: 30px;
   font-weight: 700;
@@ -277,13 +278,15 @@
   color: #000;
 }
 .b-stack__text {
-  margin-top: 19px;
+  margin-top: 20px;
   font-size: 20px;
   letter-spacing: -0.003em;
   line-height: 30px;
   color: #000;
   text-wrap: pretty;
 }
+/* Bold words must not stretch the line: the design's rhythm is an even 30px */
+.b-stack__text strong { line-height: 0; }
 
 /* Step panels inside each card (same light UI language as the hero workspace) */
 .sui { position: absolute; inset: 0; padding: 32px 40px; display: flex; flex-direction: column; color: #2c2432; }

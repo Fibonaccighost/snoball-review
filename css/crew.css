@@ -213,7 +213,7 @@
 .cr-cards { position: absolute; left: 119px; top: 367.6px; }
 .cr-card { position: absolute; top: 0; width: 400px; height: 390px; isolation: isolate; color: #fff; transition: transform .5s cubic-bezier(.22, 1, .36, 1); }
 /* Hover: the card pops out and a deeper shadow fades in under it */
-.cr-card::before { content: ""; position: absolute; left: 28px; top: 20.5px; width: 357px; height: 343px; border-radius: 40px; z-index: -1;
+.cr-card::before { content: ""; position: absolute; left: 28px; top: 20.5px; width: 357px; height: 343px; border-radius: 45.6px; z-index: -1;
   box-shadow: 0 34px 60px -12px rgba(0, 0, 0, .45), 0 12px 24px rgba(0, 0, 0, .18); opacity: 0; transition: opacity .5s cubic-bezier(.22, 1, .36, 1); }
 .cr-card:hover { transform: translateY(-14px) scale(1.035); z-index: 2; }
 .cr-card:hover::before { opacity: 1; }
@@ -222,10 +222,14 @@
 .cr-card:nth-child(3) { left: 789px; }
 .cr-card__bg { position: absolute; inset: 0; width: 400px; height: 390px; }
 .cr-card__num { --x: 57; --y: 51; --fs: 43; --lh: 43; font-weight: 700; }
-.cr-card__title { --x: 56; --y: 205; --fs: 31; --lh: 31; font-weight: 700; letter-spacing: -.005em; }
-.cr-card__title span { display: block; mix-blend-mode: overlay; }
-/* Readability: the top copy is solid white with a soft shadow; the overlay copy underneath keeps the colour tint */
-.cr-card__title span + span { position: absolute; inset: 0; mix-blend-mode: normal; color: #fff; text-shadow: 0 2px 14px rgba(0, 0, 0, .45); }
+.cr-card__title { --x: 56; --y: 205; --fs: 31; --lh: 31; font-weight: 700; -webkit-text-stroke: .3px var(--tint); }
+/* The design's title colour: two white copies stacked in overlay blend, so the colour comes from the art behind.
+   Overlay alone makes letters vanish over dark art, so a see-through copy in the card's own hue sits underneath them */
+.cr-card:nth-child(1) { --tint: rgb(255 47 179 / .75); }
+.cr-card:nth-child(2) { --tint: rgb(0 200 240 / .75); }
+.cr-card:nth-child(3) { --tint: rgb(190 44 255 / .85); }
+.cr-card__title span { display: block; color: var(--tint); }
+.cr-card__title span + span { position: absolute; inset: 0; color: #fff; -webkit-text-stroke-color: #fff; mix-blend-mode: overlay; }
 .cr-card__body { --x: 56; --y: 279; --fs: 14.6; --lh: 15; }
 
 /* ---------- For ambitious brands ---------- */
