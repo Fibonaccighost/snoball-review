@@ -54,15 +54,16 @@ section { position: relative; }
 .hero__sub strong { font-weight: 700; }
 /* Brand strip: runs the full viewport width, right to left. Constant speed is intended, so it uses linear timing. */
 .hero__marquee { position: absolute; top: 812px; left: calc(720px - 50vw); width: 100vw; display: flex; overflow: hidden; }
-.hero__logos { list-style: none; margin: 0; padding: 0; display: flex; flex: none; animation: hero-marquee 36s linear infinite; }
+.hero__logos { list-style: none; margin: 0; padding: 0; display: flex; flex: none; animation: hero-marquee 79s linear infinite; }
 .hero__marquee:hover .hero__logos { animation-play-state: paused; }
 @keyframes hero-marquee { to { transform: translateX(-100%); } }
 .hero__logos li { flex: none; display: flex; align-items: center; height: 40px; padding-right: 64px; }
 /* Logos are recoloured to white so the strip reads as one row; sizes are tuned by eye so they look the same weight */
-.hero__logos img { height: 28px; width: auto; max-width: none; filter: brightness(0) invert(1); opacity: .9; }
-.hero__logos .is-sm img { height: 24px; }
-.hero__logos .is-lg img { height: 32px; }
-.hero__logos .is-text { font-size: 30px; line-height: 36px; font-weight: 700; letter-spacing: -0.04em; color: rgba(255,255,255,.9); white-space: nowrap; }
+.hero__logos img { height: var(--h, 28px); width: auto; max-width: none; filter: brightness(0) invert(1); opacity: .9; }
+/* These logos have dark detail inside the mark, so their files are already white and skip the filter, which would flatten them */
+.hero__logos .is-white img { filter: none; }
+.hero__logos .is-text { gap: 8px; font-size: 24px; line-height: 32px; font-weight: 700; letter-spacing: -0.04em; color: rgba(255,255,255,.9); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .hero__logos { animation: none; } }
 /* The black hero meets the white section below in one clean edge: that section overlaps the hero by 48px with
    rounded top corners (see .sides). */
 .hero__fade { display: none; }
@@ -299,8 +300,8 @@ section { position: relative; }
   .hero__title, .sides__title, .impact__title, .infl__title, .infl__blur, .crew__title, .talk__title { font-size: clamp(40px, 8vw, 72px); line-height: 1.02; white-space: normal; }
   .hero__marquee { order: 6; width: calc(100% + 48px) !important; max-width: none; margin: 0 -24px !important; }
   .hero__logos li { padding-right: 40px; }
-  .hero__logos img { height: 22px; } .hero__logos .is-sm img { height: 18px; } .hero__logos .is-lg img { height: 24px; }
-  .hero__logos .is-text { font-size: 24px; line-height: 32px; }
+  .hero__logos img { height: calc(var(--h, 28px) * .8); }
+  .hero__logos .is-text { font-size: 20px; line-height: 28px; }
   .sides { margin-top: -32px; border-radius: 32px 32px 0 0; }
   .hero__fade { display: none; }
   /* Small screens: no pinning; the sides card shows its split state as two stacked link cards */
